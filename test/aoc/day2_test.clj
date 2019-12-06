@@ -10,4 +10,5 @@
     (is (= [2, 0, 0, 0] (apply-oppcode [1, 0, 0, 0] 0))))
 
   (testing "it runs a program with a simple addition"
-    (is (= [2, 0, 0, 0, 99] (run-program [1, 0, 0, 0, 99])))))
+    (is (= [2, 0, 0, 0, 99] (run-program [1, 0, 0, 0, 99])))
+    (is (= [2, 3, 0, 6, 99] (run-program [2, 3, 0, 3, 99])))))

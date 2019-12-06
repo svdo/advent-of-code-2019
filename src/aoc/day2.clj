@@ -26,19 +26,27 @@
 
 (def instruction
   {1  :add
+   2 :multiply
    99 :terminate})
 
-(defn apply-add [program pc]
+(defn apply-binary-operation [program pc operation]
   (let [lhs (op-lhs program pc)
         rhs (op-rhs program pc)
         output-index (program (+ pc 3))]
-    (assoc program output-index (+ lhs rhs))))
+    (assoc program output-index (operation lhs rhs))))
+
+(defn apply-add [program pc]
+  (apply-binary-operation program pc +))
+
+(defn apply-multiply [program pc]
+  (apply-binary-operation program pc *))
 
 (defmulti apply-oppcode
   (fn [program pc]
     (instruction (program pc))))
 
 (defmethod apply-oppcode :add [program pc] (apply-add program pc))
+(defmethod apply-oppcode :multiply [program pc] (apply-multiply program pc))
 (defmethod apply-oppcode :terminate [program _] program)
 
 (defn run-program
