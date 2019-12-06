@@ -26,3 +26,25 @@
 (def input
   (->> (read-file-lines "resources/day3.txt")
        (map parse-line)))
+
+;;
+;; Part 1
+;;
+
+(def axis {:left :x :right :x :up :y :down :y})
+
+(defmulti expand-step (fn [_ [direction _]] (axis direction)))
+(defmethod expand-step :x [[x y] [direction length]]
+  (let [x-multiplier (case direction
+                       :left -1
+                       :right 1)]
+    (into #{} (map (fn [x] [x y]) (range (+ x (* x-multiplier 1))
+                                         (+ x (* x-multiplier (inc length)))
+                                         x-multiplier)))))
+(defmethod expand-step :y [[x y] [direction length]]
+  (let [y-multiplier (case direction
+                       :down -1
+                       :up 1)]
+    (into #{} (map (fn [y] [x y]) (range (+ y (* y-multiplier 1))
+                                         (+ y (* y-multiplier (inc length)))
+                                         y-multiplier)))))
