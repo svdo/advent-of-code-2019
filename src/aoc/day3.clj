@@ -1,6 +1,6 @@
 (ns aoc.day3
   (:require [clojure.string :as str]
-            [clojure.set :refer [union]]))
+            [clojure.set :refer [union intersection]]))
 
 
 ;;
@@ -34,6 +34,8 @@
 
 (def axis {:left :x :right :x :up :y :down :y})
 
+;; The definition of expand-step contains loads of duplication;
+;; this needs to be refactored.
 (defmulti expand-step (fn [_ [direction _]] (axis direction)))
 (defmethod expand-step :x [[x y] [direction length]]
   (let [x-multiplier (case direction
@@ -62,3 +64,13 @@
       (union (expand-step from step)
              (expand-steps (move from step) (next steps))))
     #{}))
+
+(defn abs [n] (max n (- n)))
+(defn manhattan-distance-to-origin [[x y]] (+ (abs x) (abs y)))
+(defn closest-to-origin [coordinates]
+  (apply min (map manhattan-distance-to-origin coordinates)))
+
+(defn intersections [path1 path2]
+  (let [expanded1 (expand-steps [0 0] path1)
+        expanded2 (expand-steps [0 0] path2)]
+    (intersection expanded1 expanded2)))
