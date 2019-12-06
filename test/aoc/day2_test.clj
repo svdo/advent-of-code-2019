@@ -9,4 +9,7 @@
   (testing "it runs a program with a simple operation"
     (is (= [2, 0, 0, 0, 99] (run-program [1, 0, 0, 0, 99])))
     (is (= [2, 3, 0, 6, 99] (run-program [2, 3, 0, 3, 99])))
-    (is (= [2, 4, 4, 5, 99, 9801] (run-program [2, 4, 4, 5, 99, 0])))))
+    (is (= [2, 4, 4, 5, 99, 9801] (run-program [2, 4, 4, 5, 99, 0]))))
+
+  (testing "it runs a program with two operations"
+    (is (= [30, 1, 1, 4, 2, 5, 6, 0, 99] (run-program [1, 1, 1, 4, 99, 5, 6, 0, 99])))))

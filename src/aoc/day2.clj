@@ -47,6 +47,14 @@
   ([program pc]
    (let [instruction (instruction (program pc))]
      (case instruction
-       :add (apply-add program pc)
-       :multiply (apply-multiply program pc)
+       :add
+       (-> program
+           (apply-add pc)
+           (run-program (+ pc 4)))
+
+       :multiply
+       (-> program
+           (apply-multiply pc)
+           (run-program (+ pc 4)))
+
        :terminate program))))
