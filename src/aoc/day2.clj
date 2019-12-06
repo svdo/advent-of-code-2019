@@ -9,54 +9,51 @@
    107, 1, 9, 107, 111, 1, 111, 6, 115, 1, 115, 2, 119, 1, 119, 10, 0, 99, 2
    14, 0, 0])
 
-(def instruction
-  {1  :add
-   99 :terminate})
-
-(defn op-arg [program pc]
+(defn op-arg [program ip]
   (fn [offset]
-    (let [index-of-lhs (program (+ pc offset))]
+    (let [index-of-lhs (program (+ ip offset))]
       (program index-of-lhs))))
 
-(defn op-lhs [program pc]
-  ((op-arg program pc) 1))
+(defn op-lhs [program ip]
+  ((op-arg program ip) 1))
 
-(defn op-rhs [program pc]
-  ((op-arg program pc) 2))
+(defn op-rhs [program ip]
+  ((op-arg program ip) 2))
 
-(def instruction
+(def opcode->op
   {1  :add
-   2 :multiply
+   2  :multiply
    99 :terminate})
 
-(defn apply-binary-operation [program pc operation]
-  (let [lhs (op-lhs program pc)
-        rhs (op-rhs program pc)
-        output-index (program (+ pc 3))]
+(defn apply-binary-operation [program ip operation]
+  (let [lhs (op-lhs program ip)
+        rhs (op-rhs program ip)
+        output-index (program (+ ip 3))]
     (assoc program output-index (operation lhs rhs))))
 
-(defn apply-add [program pc]
-  (apply-binary-operation program pc +))
+(defn apply-add [program ip]
+  (apply-binary-operation program ip +))
 
-(defn apply-multiply [program pc]
-  (apply-binary-operation program pc *))
+(defn apply-multiply [program ip]
+  (apply-binary-operation program ip *))
 
 (defn run-program
   ([program] (run-program program 0))
 
-  ([program pc]
-   (case (instruction (program pc))
-     :add
-     (-> program
-         (apply-add pc)
-         (recur (+ pc 4)))
+  ([program ip]
+   (let [instruction-size 4]
+     (case (opcode->op (program ip))
+       :add
+       (-> program
+           (apply-add ip)
+           (recur (+ ip instruction-size)))
 
-     :multiply
-     (-> program
-         (apply-multiply pc)
-         (recur (+ pc 4)))
+       :multiply
+       (-> program
+           (apply-multiply ip)
+           (recur (+ ip instruction-size)))
 
-     :terminate program)))
+       :terminate program))))
 
 (defn restore-1202 [program]
   (-> program
