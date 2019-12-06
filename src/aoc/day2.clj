@@ -57,3 +57,8 @@
          (recur (+ pc 4)))
 
      :terminate program)))
+
+(defn restore-1202 [program]
+  (-> program
+      (assoc 1 12)
+      (assoc 2 2)))
