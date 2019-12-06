@@ -11,12 +11,12 @@
    129606 67404 120221 148298 72329 133164 146765 85752 130554 127331 139180
    89050 110535 84393 127362 143205 140756 147071 133740])
 
-(defn calculate-fuel [mass]
+(defn module-fuel [mass]
   (-> mass
       (quot 3)
       (- 2)))
 
 (defn total-fuel-requirement [masses]
   (->> masses
-       (map calculate-fuel)
+       (map module-fuel)
        (reduce +)))
