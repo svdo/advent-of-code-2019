@@ -42,19 +42,18 @@
   (apply-binary-operation program pc *))
 
 (defn run-program
-  ([program]
-   (run-program program 0))
+  ([program] (run-program program 0))
+
   ([program pc]
-   (let [instruction (instruction (program pc))]
-     (case instruction
-       :add
-       (-> program
-           (apply-add pc)
-           (run-program (+ pc 4)))
+   (case (instruction (program pc))
+     :add
+     (-> program
+         (apply-add pc)
+         (recur (+ pc 4)))
 
-       :multiply
-       (-> program
-           (apply-multiply pc)
-           (run-program (+ pc 4)))
+     :multiply
+     (-> program
+         (apply-multiply pc)
+         (recur (+ pc 4)))
 
-       :terminate program))))
+     :terminate program)))
