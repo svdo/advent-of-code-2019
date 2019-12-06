@@ -1,5 +1,6 @@
 (ns aoc.day3
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.set :refer [union]]))
 
 
 ;;
@@ -48,3 +49,16 @@
     (into #{} (map (fn [y] [x y]) (range (+ y (* y-multiplier 1))
                                          (+ y (* y-multiplier (inc length)))
                                          y-multiplier)))))
+
+(defmulti move (fn [_ [direction _]] direction))
+(defmethod move :up [[x y] [_ length]] [x (+ y length)])
+(defmethod move :down [[x y] [_ length]] [x (- y length)])
+(defmethod move :right [[x y] [_ length]] [(+ x length) y])
+(defmethod move :left [[x y] [_ length]] [(- x length) y])
+
+(defn expand-steps [from steps]
+  (if (seq steps)
+    (let [step (first steps)]
+      (union (expand-step from step)
+             (expand-steps (move from step) (next steps))))
+    #{}))
