@@ -41,16 +41,12 @@
 (defn apply-multiply [program pc]
   (apply-binary-operation program pc *))
 
-(defmulti apply-oppcode
-  (fn [program pc]
-    (instruction (program pc))))
-
-(defmethod apply-oppcode :add [program pc] (apply-add program pc))
-(defmethod apply-oppcode :multiply [program pc] (apply-multiply program pc))
-(defmethod apply-oppcode :terminate [program _] program)
-
 (defn run-program
   ([program]
    (run-program program 0))
   ([program pc]
-   (apply-oppcode program pc)))
+   (let [instruction (instruction (program pc))]
+     (case instruction
+       :add (apply-add program pc)
+       :multiply (apply-multiply program pc)
+       :terminate program))))
