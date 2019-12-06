@@ -20,3 +20,14 @@
   (->> masses
        (map module-fuel)
        (reduce +)))
+
+(defn module-fuel-with-fuel-mass [mass]
+  (let [fuel (module-fuel mass)]
+    (if (> fuel 0)
+      (+ fuel (module-fuel-with-fuel-mass fuel))
+      0)))
+
+(defn total-fuel-requirement-with-fuel-mass [masses]
+  (->> masses
+       (map module-fuel-with-fuel-mass)
+       (reduce +)))
