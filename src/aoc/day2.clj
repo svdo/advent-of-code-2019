@@ -1,4 +1,7 @@
-(ns aoc.day2)
+(ns aoc.day2
+  (:refer-clojure :exclude [==])
+  (:use clojure.core.logic)
+  (:require [clojure.core.logic.fd :as fd]))
 
 (def input
   [1, 0, 0, 3, 1, 1, 2, 3, 1, 3, 4, 3, 1, 5, 0, 3, 2, 13, 1, 19, 1, 10, 19, 23
@@ -55,7 +58,21 @@
 
        :terminate program))))
 
-(defn restore-1202 [program]
+(defn restore [program noun verb]
   (-> program
-      (assoc 1 12)
-      (assoc 2 2)))
+      (assoc 1 noun)
+      (assoc 2 verb)))
+
+(defn restore-1202 [program]
+  (restore program 12 2))
+
+(defnc is-solution? [program noun verb]
+  (= 19690720 (first (run-program (restore program noun verb)))))
+
+(defn find-noun-and-verb [program]
+  (first (let [prog (lvar)]
+           (run 1 [noun verb]
+                (== prog program)
+                (fd/in noun (fd/interval 0 99))
+                (fd/in verb (fd/interval 0 99))
+                (is-solution? prog noun verb)))))
